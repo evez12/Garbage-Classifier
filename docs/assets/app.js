@@ -324,6 +324,9 @@ const hideAlert = () => { $("alert").hidden = true; };
  * step aliases badly and would shift the prediction.
  */
 function preprocess(image, meta) {
+  if (!image.naturalWidth || !image.naturalHeight) {
+    throw new Error("the image has not finished decoding");
+  }
   const resizeTo = meta.preprocess.resize[0];
   const crop = meta.preprocess.crop[0];
   const { mean, std } = meta.preprocess;
@@ -482,6 +485,7 @@ function setImageSource(src, revokeAfterLoad) {
 }
 
 async function acceptImage(src, { revoke = false, label = "" } = {}) {
+  if (busy) return; // a classification is running against the current image
   hideAlert();
   try {
     await setImageSource(src, revoke);
@@ -516,10 +520,17 @@ async function classify() {
   const original = button.textContent;
   button.disabled = true;
   button.innerHTML = '<span class="spinner"></span>Classifying';
+  setInputsEnabled(false);
   hideAlert();
 
   try {
     await loadModel();
+    if (!imageEl.complete || !imageEl.naturalWidth) {
+      // Selecting a new image while a run is in flight can leave the shared
+      // <img> mid-load, and a zero-sized canvas throws deep inside preprocess.
+      showAlert("That image is still loading. Give it a moment and press Classify again.");
+      return;
+    }
     const tensor = preprocess(imageEl, modelMeta);
     const started = performance.now();
     const output = await session.run({ [modelMeta.input.name]: tensor });
@@ -560,9 +571,18 @@ async function classify() {
     }
   } finally {
     busy = false;
+    setInputsEnabled(true);
     button.disabled = !hasImage;
     button.textContent = original;
   }
+}
+
+/** Lock the image controls while a classification is running. */
+function setInputsEnabled(enabled) {
+  document.querySelectorAll(".sample").forEach((b) => { b.disabled = !enabled; });
+  const dropzone = $("dropzone");
+  dropzone.setAttribute("aria-disabled", String(!enabled));
+  dropzone.style.pointerEvents = enabled ? "" : "none";
 }
 
 function flipTensor(tensor, width) {
