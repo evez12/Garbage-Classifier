@@ -472,6 +472,14 @@ let busy = false;
 
 function setImageSource(src, revokeAfterLoad) {
   return new Promise((resolve, reject) => {
+    // Assigning src the value it already holds does not re-fire `load`, so
+    // picking the same sample twice would wait on an event that never comes.
+    const resolved = new URL(src, document.baseURI).href;
+    if (imageEl.src === resolved && imageEl.complete && imageEl.naturalWidth) {
+      if (revokeAfterLoad) URL.revokeObjectURL(src);
+      resolve();
+      return;
+    }
     imageEl.onload = () => {
       if (revokeAfterLoad) URL.revokeObjectURL(src);
       resolve();
