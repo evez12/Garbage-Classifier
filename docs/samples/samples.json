@@ -1,0 +1,62 @@
+[
+  {
+    "file": "battery_564.jpg",
+    "label": "battery",
+    "expected_prediction": "battery",
+    "expected_confidence": 0.999
+  },
+  {
+    "file": "biological_295.jpg",
+    "label": "biological",
+    "expected_prediction": "biological",
+    "expected_confidence": 0.9984
+  },
+  {
+    "file": "cardboard_1025.jpg",
+    "label": "cardboard",
+    "expected_prediction": "cardboard",
+    "expected_confidence": 0.9991
+  },
+  {
+    "file": "clothes_1594.jpg",
+    "label": "clothes",
+    "expected_prediction": "clothes",
+    "expected_confidence": 0.9986
+  },
+  {
+    "file": "glass_1461.jpg",
+    "label": "glass",
+    "expected_prediction": "glass",
+    "expected_confidence": 0.9986
+  },
+  {
+    "file": "metal_200.jpg",
+    "label": "metal",
+    "expected_prediction": "metal",
+    "expected_confidence": 0.9994
+  },
+  {
+    "file": "paper_752.jpg",
+    "label": "paper",
+    "expected_prediction": "paper",
+    "expected_confidence": 0.9988
+  },
+  {
+    "file": "plastic_843.jpg",
+    "label": "plastic",
+    "expected_prediction": "plastic",
+    "expected_confidence": 0.9995
+  },
+  {
+    "file": "shoes_697.jpg",
+    "label": "shoes",
+    "expected_prediction": "shoes",
+    "expected_confidence": 0.9985
+  },
+  {
+    "file": "trash_203.jpg",
+    "label": "trash",
+    "expected_prediction": "trash",
+    "expected_confidence": 0.9992
+  }
+]

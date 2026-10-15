@@ -1,0 +1,57 @@
+{
+  "model_file": "garbage_regnety16gf.onnx",
+  "arch": "regnet_y_1_6gf",
+  "source_run": "ft_full_llrd",
+  "classes": [
+    "battery",
+    "biological",
+    "cardboard",
+    "clothes",
+    "glass",
+    "metal",
+    "paper",
+    "plastic",
+    "shoes",
+    "trash"
+  ],
+  "input": {
+    "name": "input",
+    "layout": "NCHW",
+    "height": 224,
+    "width": 224
+  },
+  "preprocess": {
+    "resize": [
+      232
+    ],
+    "crop": [
+      224
+    ],
+    "interpolation": "bilinear",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "temperature": 0.5846938597825477,
+  "tta_hflip": false,
+  "review_threshold": 0.8942593336105347,
+  "test_metrics": {
+    "accuracy": 0.9737292975442604,
+    "balanced_accuracy": 0.9653138398227012,
+    "macro_precision": 0.9705483857936441,
+    "macro_recall": 0.9653138398227012,
+    "macro_f1": 0.9676726226593297,
+    "weighted_f1": 0.9736088578292834,
+    "mcc": 0.9703590249456897,
+    "cohen_kappa": 0.9703389846112263
+  },
+  "opset": 18,
+  "size_bytes": 42147227
+}

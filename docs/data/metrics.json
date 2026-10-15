@@ -1,0 +1,685 @@
+{
+  "selected_model": "ft_full_llrd",
+  "selected_description": "Full fine-tuning, layer-wise LR decay",
+  "runner_up": "ft_block34",
+  "classes": [
+    "battery",
+    "biological",
+    "cardboard",
+    "clothes",
+    "glass",
+    "metal",
+    "paper",
+    "plastic",
+    "shoes",
+    "trash"
+  ],
+  "dataset": {
+    "name": "Garbage Classification v2",
+    "kaggle": "https://www.kaggle.com/datasets/sumn2u/garbage-classification-v2",
+    "images_audited": 12259,
+    "images_after_cleaning": 12257,
+    "split_sizes": {
+      "train": 8754,
+      "val": 1752,
+      "test": 1751
+    }
+  },
+  "recipe": {
+    "tta_hflip": false,
+    "temperature": 0.5846938597825477,
+    "review_threshold": 0.8942593336105347,
+    "review_target": 0.99
+  },
+  "headline": {
+    "accuracy": {
+      "value": 0.9737292975442604,
+      "ci": [
+        0.9663049685893775,
+        0.9805825242718447
+      ],
+      "baseline": 0.9337521416333524
+    },
+    "macro_f1": {
+      "value": 0.9676726226593297,
+      "ci": [
+        0.9571058223917249,
+        0.9770172347416755
+      ],
+      "baseline": 0.9244351368573385
+    },
+    "balanced_accuracy": {
+      "value": 0.9653138398227012,
+      "ci": [
+        0.9537983648228209,
+        0.9757266674691326
+      ],
+      "baseline": 0.9256243974247031
+    },
+    "weighted_f1": {
+      "value": 0.9736088578292834,
+      "ci": [
+        0.965920756081886,
+        0.980563916613901
+      ],
+      "baseline": 0.933478538779607
+    },
+    "mcc": {
+      "value": 0.9703590249456897,
+      "ci": [
+        0.9619314817890532,
+        0.9781272876263652
+      ],
+      "baseline": 0.9252680508905374
+    }
+  },
+  "probability_metrics": {
+    "log-loss (raw)": {
+      "validation": 0.1974850296974182,
+      "test": 0.19349224865436554,
+      "linear_probe test": 0.21390797197818756
+    },
+    "log-loss (T-scaled)": {
+      "validation": 0.10867907106876373,
+      "test": 0.09882646799087524,
+      "linear_probe test": 0.19972766935825348
+    },
+    "ECE (raw)": {
+      "validation": 0.10415640276044473,
+      "test": 0.10767861082511655,
+      "linear_probe test": 0.03899490266510716
+    },
+    "ECE (T-scaled)": {
+      "validation": 0.0052905982385759946,
+      "test": 0.007920595440164671,
+      "linear_probe test": 0.01436620041821633
+    },
+    "Brier (T-scaled)": {
+      "validation": 0.045802892768974895,
+      "test": 0.04214955195918611,
+      "linear_probe test": 0.09814344676976627
+    },
+    "top-3 accuracy": {
+      "validation": 0.9948630136986302,
+      "test": 0.9937178754997145,
+      "linear_probe test": 0.9920045688178184
+    },
+    "ROC-AUC (OvR, macro)": {
+      "validation": 0.998472337135665,
+      "test": 0.9988295792610385,
+      "linear_probe test": 0.996197106130972
+    },
+    "mean average precision": {
+      "validation": 0.9921504046220069,
+      "test": 0.9903088041372665,
+      "linear_probe test": 0.9704343385608134
+    }
+  },
+  "per_class": [
+    {
+      "class": "trash",
+      "support": 65,
+      "precision": 0.9322033898305084,
+      "recall": 0.8461538461538461,
+      "f1": 0.8870967741935484,
+      "f1_ci": "[0.821, 0.941]",
+      "delta_f1_pp": 8.394716789433577,
+      "missed": 10,
+      "false_alarms": 4
+    },
+    {
+      "class": "paper",
+      "support": 191,
+      "precision": 0.9481865284974094,
+      "recall": 0.9581151832460733,
+      "f1": 0.953125,
+      "f1_ci": "[0.929, 0.973]",
+      "delta_f1_pp": 5.783704188481675,
+      "missed": 8,
+      "false_alarms": 10
+    },
+    {
+      "class": "cardboard",
+      "support": 202,
+      "precision": 0.9560975609756096,
+      "recall": 0.9702970297029704,
+      "f1": 0.9631449631449632,
+      "f1_ci": "[0.944, 0.980]",
+      "delta_f1_pp": 4.157633569398278,
+      "missed": 6,
+      "false_alarms": 9
+    },
+    {
+      "class": "plastic",
+      "support": 228,
+      "precision": 0.956896551724138,
+      "recall": 0.9736842105263158,
+      "f1": 0.9652173913043478,
+      "f1_ci": "[0.947, 0.981]",
+      "delta_f1_pp": 6.653897720743151,
+      "missed": 6,
+      "false_alarms": 10
+    },
+    {
+      "class": "metal",
+      "support": 132,
+      "precision": 0.962406015037594,
+      "recall": 0.9696969696969696,
+      "f1": 0.9660377358490566,
+      "f1_ci": "[0.943, 0.985]",
+      "delta_f1_pp": 6.869933280723151,
+      "missed": 4,
+      "false_alarms": 5
+    },
+    {
+      "class": "glass",
+      "support": 248,
+      "precision": 0.987603305785124,
+      "recall": 0.9637096774193548,
+      "f1": 0.9755102040816328,
+      "f1_ci": "[0.960, 0.988]",
+      "delta_f1_pp": 5.969911578594478,
+      "missed": 9,
+      "false_alarms": 3
+    },
+    {
+      "class": "biological",
+      "support": 100,
+      "precision": 0.9705882352941176,
+      "recall": 0.99,
+      "f1": 0.9801980198019802,
+      "f1_ci": "[0.959, 0.996]",
+      "delta_f1_pp": 1.4680778422669791,
+      "missed": 1,
+      "false_alarms": 3
+    },
+    {
+      "class": "battery",
+      "support": 108,
+      "precision": 1.0,
+      "recall": 0.9814814814814816,
+      "f1": 0.9906542056074766,
+      "f1_ci": "[0.975, 1.000]",
+      "delta_f1_pp": 3.5699250652521664,
+      "missed": 2,
+      "false_alarms": 0
+    },
+    {
+      "class": "shoes",
+      "support": 207,
+      "precision": 0.9951923076923076,
+      "recall": 1.0,
+      "f1": 0.9975903614457832,
+      "f1_ci": "[0.992, 1.000]",
+      "delta_f1_pp": 0.0,
+      "missed": 0,
+      "false_alarms": 1
+    },
+    {
+      "class": "clothes",
+      "support": 270,
+      "precision": 0.996309963099631,
+      "recall": 1.0,
+      "f1": 0.99815157116451,
+      "f1_ci": "[0.994, 1.000]",
+      "delta_f1_pp": 0.3696857670979603,
+      "missed": 0,
+      "false_alarms": 1
+    }
+  ],
+  "confusion_matrix": [
+    [
+      106,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      99,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      196,
+      0,
+      0,
+      0,
+      4,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      270,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      239,
+      2,
+      0,
+      5,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      1,
+      128,
+      0,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      4,
+      1,
+      0,
+      0,
+      183,
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      2,
+      222,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      207,
+      0
+    ],
+    [
+      0,
+      1,
+      2,
+      0,
+      1,
+      1,
+      4,
+      1,
+      0,
+      55
+    ]
+  ],
+  "n_test": 1751,
+  "n_misclassified": 46,
+  "experiments": [
+    {
+      "name": "linear_probe",
+      "description": "Frozen backbone, linear head (Section 9)",
+      "trainable_m": 0.00889,
+      "epochs_run": 15,
+      "best_epoch": 14,
+      "train_time_min": null,
+      "val_acc": 0.9406392694063926,
+      "val_macro_f1": 0.9351214832869594,
+      "test_acc": 0.9337521416333524,
+      "test_macro_f1": 0.9244351368573384
+    },
+    {
+      "name": "ft_block4",
+      "description": "Unfreeze last stage",
+      "trainable_m": 3.912844,
+      "epochs_run": 19,
+      "best_epoch": 14,
+      "train_time_min": 22.95572532499961,
+      "val_acc": 0.9651826484018264,
+      "val_macro_f1": 0.9613680365843382,
+      "test_acc": 0.9685893774985722,
+      "test_macro_f1": 0.9611486539653448
+    },
+    {
+      "name": "ft_block34",
+      "description": "Unfreeze last two stages",
+      "trainable_m": 9.918202,
+      "epochs_run": 16,
+      "best_epoch": 11,
+      "train_time_min": 18.73043259166697,
+      "val_acc": 0.9680365296803652,
+      "val_macro_f1": 0.9646631120488364,
+      "test_acc": 0.9685893774985722,
+      "test_macro_f1": 0.9622048713971104
+    },
+    {
+      "name": "ft_full_llrd",
+      "description": "Full fine-tuning, layer-wise LR decay",
+      "trainable_m": 10.32232,
+      "epochs_run": 20,
+      "best_epoch": 18,
+      "train_time_min": 23.224631261666705,
+      "val_acc": 0.9726027397260274,
+      "val_macro_f1": 0.9687770827098788,
+      "test_acc": 0.9737292975442604,
+      "test_macro_f1": 0.9676726226593296
+    },
+    {
+      "name": "ft_block34_cw",
+      "description": "block3+4 + sqrt class weights",
+      "trainable_m": 9.918202,
+      "epochs_run": 20,
+      "best_epoch": 16,
+      "train_time_min": 20.566517521666416,
+      "val_acc": 0.9674657534246576,
+      "val_macro_f1": 0.9642196448817412,
+      "test_acc": 0.9731581953169616,
+      "test_macro_f1": 0.966679419379864
+    }
+  ],
+  "selection": [
+    {
+      "experiment": "ft_full_llrd",
+      "val macro-F1": 0.9687770827098788,
+      "\u0394 to top (pp)": 0.0,
+      "\u0394 CI low (pp)": 0.0,
+      "\u0394 CI high (pp)": 0.0,
+      "tied with top": true,
+      "val NLL (T-scaled)": 0.1086790710687637,
+      "trainable params (M)": 10.32232
+    },
+    {
+      "experiment": "ft_block34",
+      "val macro-F1": 0.9646631120488364,
+      "\u0394 to top (pp)": 0.4113970661042354,
+      "\u0394 CI low (pp)": -0.102741946326417,
+      "\u0394 CI high (pp)": 0.9929706287088212,
+      "tied with top": true,
+      "val NLL (T-scaled)": 0.1114371865987777,
+      "trainable params (M)": 9.918202
+    },
+    {
+      "experiment": "ft_block34_cw",
+      "val macro-F1": 0.9642196448817412,
+      "\u0394 to top (pp)": 0.4557437828137778,
+      "\u0394 CI low (pp)": -0.0739156419371964,
+      "\u0394 CI high (pp)": 1.0624393313868394,
+      "tied with top": true,
+      "val NLL (T-scaled)": 0.1159954145550727,
+      "trainable params (M)": 9.918202
+    },
+    {
+      "experiment": "ft_block4",
+      "val macro-F1": 0.9613680365843382,
+      "\u0394 to top (pp)": 0.7409046125540608,
+      "\u0394 CI low (pp)": -0.0093398823468365,
+      "\u0394 CI high (pp)": 1.50213442359168,
+      "tied with top": true,
+      "val NLL (T-scaled)": 0.1138920336961746,
+      "trainable params (M)": 3.912844
+    },
+    {
+      "experiment": "linear_probe",
+      "val macro-F1": 0.9351214832869594,
+      "\u0394 to top (pp)": 3.36555994229194,
+      "\u0394 CI low (pp)": 2.347474284513398,
+      "\u0394 CI high (pp)": 4.427245031295724,
+      "tied with top": false,
+      "val NLL (T-scaled)": 0.1951057761907577,
+      "trainable params (M)": 0.00889
+    }
+  ],
+  "significance": [
+    {
+      "comparison": "ft_block4 vs linear_probe",
+      "family": "vs baseline",
+      "\u0394 macro-F1 (pp)": 3.671351710800641,
+      "\u0394 macro-F1 CI low": 2.595837923452283,
+      "\u0394 macro-F1 CI high": 4.900865165729116,
+      "P(\u0394 \u2264 0)": 0.0,
+      "\u0394 acc (pp)": 3.4837235865219807,
+      "\u0394 acc CI low": 2.56853226727584,
+      "\u0394 acc CI high": 4.51170759565962,
+      "fixed": 69,
+      "broken": 8,
+      "McNemar p": 3.137352112678877e-13,
+      "McNemar p (Holm)": 6.274704225357754e-13,
+      "significant (5%)": true
+    },
+    {
+      "comparison": "ft_block34 vs linear_probe",
+      "family": "vs baseline",
+      "\u0394 macro-F1 (pp)": 3.776973453977195,
+      "\u0394 macro-F1 CI low": 2.736612811597272,
+      "\u0394 macro-F1 CI high": 4.971987068469298,
+      "P(\u0394 \u2264 0)": 0.0,
+      "\u0394 acc (pp)": 3.4837235865219807,
+      "\u0394 acc CI low": 2.5128498001142248,
+      "\u0394 acc CI high": 4.511707595659631,
+      "fixed": 70,
+      "broken": 9,
+      "McNemar p": 7.778844062771146e-13,
+      "McNemar p (Holm)": 7.778844062771146e-13,
+      "significant (5%)": true
+    },
+    {
+      "comparison": "ft_full_llrd vs linear_probe",
+      "family": "vs baseline",
+      "\u0394 macro-F1 (pp)": 4.323748580199127,
+      "\u0394 macro-F1 CI low": 3.262000039326124,
+      "\u0394 macro-F1 CI high": 5.541584350272061,
+      "P(\u0394 \u2264 0)": 0.0,
+      "\u0394 acc (pp)": 3.9977155910908,
+      "\u0394 acc CI low": 3.0268418046830337,
+      "\u0394 acc CI high": 5.082809822958312,
+      "fixed": 77,
+      "broken": 7,
+      "McNemar p": 5.137564699362503e-16,
+      "McNemar p (Holm)": 2.055025879745001e-15,
+      "significant (5%)": true
+    },
+    {
+      "comparison": "ft_block34_cw vs linear_probe",
+      "family": "vs baseline",
+      "\u0394 macro-F1 (pp)": 4.2244282522525545,
+      "\u0394 macro-F1 CI low": 3.1607991211300317,
+      "\u0394 macro-F1 CI high": 5.451732840638397,
+      "P(\u0394 \u2264 0)": 0.0,
+      "\u0394 acc (pp)": 3.940605368360928,
+      "\u0394 acc CI low": 2.969731581953172,
+      "\u0394 acc CI high": 5.025699600228439,
+      "fixed": 76,
+      "broken": 7,
+      "McNemar p": 9.430547941836709e-16,
+      "McNemar p (Holm)": 2.8291643825510133e-15,
+      "significant (5%)": true
+    },
+    {
+      "comparison": "ft_full_llrd vs ft_block4",
+      "family": "selected vs others",
+      "\u0394 macro-F1 (pp)": 0.6523968693984861,
+      "\u0394 macro-F1 CI low": -0.1485981097481728,
+      "\u0394 macro-F1 CI high": 1.4607128006739858,
+      "P(\u0394 \u2264 0)": 0.058,
+      "\u0394 acc (pp)": 0.5139920045688195,
+      "\u0394 acc CI low": -0.1142204454597342,
+      "\u0394 acc CI high": 1.0865219874357503,
+      "fixed": 20,
+      "broken": 11,
+      "McNemar p": 0.1496127843856811,
+      "McNemar p (Holm)": 0.2992255687713623,
+      "significant (5%)": false
+    },
+    {
+      "comparison": "ft_full_llrd vs ft_block34",
+      "family": "selected vs others",
+      "\u0394 macro-F1 (pp)": 0.5467751262219323,
+      "\u0394 macro-F1 CI low": 0.0884170677367537,
+      "\u0394 macro-F1 CI high": 1.0466690728468522,
+      "P(\u0394 \u2264 0)": 0.0065,
+      "\u0394 acc (pp)": 0.5139920045688195,
+      "\u0394 acc CI low": 0.1142204454597339,
+      "\u0394 acc CI high": 0.9708737864077666,
+      "fixed": 12,
+      "broken": 3,
+      "McNemar p": 0.03515625,
+      "McNemar p (Holm)": 0.10546875,
+      "significant (5%)": false
+    },
+    {
+      "comparison": "ft_full_llrd vs ft_block34_cw",
+      "family": "selected vs others",
+      "\u0394 macro-F1 (pp)": 0.0993203279465726,
+      "\u0394 macro-F1 CI low": -0.3649713574167895,
+      "\u0394 macro-F1 CI high": 0.5734819218104608,
+      "P(\u0394 \u2264 0)": 0.32,
+      "\u0394 acc (pp)": 0.0571102227298725,
+      "\u0394 acc CI low": -0.342661336379213,
+      "\u0394 acc CI high": 0.456881781838947,
+      "fixed": 6,
+      "broken": 5,
+      "McNemar p": 1.0,
+      "McNemar p (Holm)": 1.0,
+      "significant (5%)": false
+    }
+  ],
+  "selective_prediction": [
+    {
+      "model": "ft_full_llrd",
+      "target accuracy": 0.97,
+      "threshold (val)": 0.3536462187767029,
+      "test coverage": 0.9988577955454028,
+      "test accuracy (covered)": 0.9748427672955976,
+      "test images to review": 2
+    },
+    {
+      "model": "ft_full_llrd",
+      "target accuracy": 0.98,
+      "threshold (val)": 0.6300891041755676,
+      "test coverage": 0.9822958309537408,
+      "test accuracy (covered)": 0.983139534883721,
+      "test images to review": 31
+    },
+    {
+      "model": "ft_full_llrd",
+      "target accuracy": 0.99,
+      "threshold (val)": 0.8942593336105347,
+      "test coverage": 0.9377498572244432,
+      "test accuracy (covered)": 0.992082825822168,
+      "test images to review": 109
+    },
+    {
+      "model": "ft_full_llrd",
+      "target accuracy": 0.995,
+      "threshold (val)": 0.9743496775627136,
+      "test coverage": 0.8726442033123929,
+      "test accuracy (covered)": 0.9973821989528796,
+      "test images to review": 223
+    }
+  ],
+  "robustness": {
+    "ft_full_llrd": {
+      "clean macro-F1": 0.9672485015758876,
+      "mean corrupted macro-F1": 0.909061947706701,
+      "worst case macro-F1": 0.7044560107616433,
+      "retention": 0.9398432214943871,
+      "worst corruption": "low_resolution (sev 3)"
+    },
+    "linear_probe": {
+      "clean macro-F1": 0.9244351368573384,
+      "mean corrupted macro-F1": 0.8515080518417736,
+      "worst case macro-F1": 0.6212254567230501,
+      "retention": 0.9211117339573613,
+      "worst corruption": "jpeg (sev 3)"
+    }
+  },
+  "efficiency": {
+    "parameters (M)": 10.32232,
+    "GFLOPs @224 (torchvision meta)": 1.612,
+    "checkpoint size (MB)": 39.77873516082764,
+    "TTA (\u00d72 inference cost)": false
+  },
+  "latency": [
+    {
+      "device": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "batch": 1,
+      "precision": "fp32",
+      "latency (ms / batch)": 29.790450000291457,
+      "throughput (img / s)": 33.56780444707
+    },
+    {
+      "device": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "batch": 1,
+      "precision": "bf16",
+      "latency (ms / batch)": 44.38225000194507,
+      "throughput (img / s)": 22.531530058890088
+    },
+    {
+      "device": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "batch": 64,
+      "precision": "fp32",
+      "latency (ms / batch)": 71.15909999993164,
+      "throughput (img / s)": 899.3930502221287
+    },
+    {
+      "device": "NVIDIA GeForce RTX 5070 Laptop GPU",
+      "batch": 64,
+      "precision": "bf16",
+      "latency (ms / batch)": 47.67589999755728,
+      "throughput (img / s)": 1342.397311918162
+    }
+  ],
+  "embedding_quality": {
+    "linear_probe": {
+      "5-NN accuracy (val gallery \u2192 test)": 0.9074814391776128,
+      "silhouette (cosine, test)": 0.15685519576072693
+    },
+    "ft_full_llrd": {
+      "5-NN accuracy (val gallery \u2192 test)": 0.9628783552255854,
+      "silhouette (cosine, test)": 0.2792399227619171
+    }
+  },
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "torch": "2.14.0+cu130",
+    "seed": 11,
+    "amp_dtype": "torch.bfloat16",
+    "batch_size": 64
+  }
+}
