@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Garbage Classifier</title>
+<meta name="description" content="Sort a photo into ten household-waste streams in your browser. RegNetY-1.6GF fine-tuned in PyTorch, 97.4% accuracy on a leakage-free test split.">
+<meta name="author" content="Avaz Huseynov">
+<meta name="color-scheme" content="light dark">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Garbage Classifier">
+<meta property="og:description" content="Sort a photo into ten household-waste streams in your browser. RegNetY-1.6GF fine-tuned in PyTorch, 97.4% accuracy on a leakage-free test split.">
+<meta property="og:url" content="https://evez12.github.io/Garbage-Classifier/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e6f79'/%3E%3Cpath d='M9 11h14M13.5 11V9h5v2M11 11l1 13h8l1-13' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+
+<link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="modulepreload" href="assets/app.js">
+<link rel="preload" href="data/metrics.json" as="fetch" crossorigin>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="shell masthead__inner">
+    <a class="wordmark" href="#top">
+      <svg class="wordmark__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="var(--accent)"/>
+        <path d="M9 11h14M13.5 11V9h5v2M11 11l1 13h8l1-13" stroke="var(--accent-ink)" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Garbage Classifier
+    </a>
+    <nav class="masthead__nav" aria-label="Sections">
+      <a class="masthead__link" href="#results">Results</a>
+      <a class="masthead__link" href="#method">Method</a>
+      <a class="masthead__link" href="#reproduce">Run it yourself</a>
+      <a class="masthead__link" href="https://github.com/evez12/Garbage-Classifier">Code</a>
+      <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Switch between light and dark">
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4"/>
+        </svg>
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ===================== Hero + live classifier ===================== -->
+  <section class="section section--hero">
+    <div class="shell">
+      <h1 class="hero__title">Sort a photo of waste into ten streams.</h1>
+      <p class="hero__sub">
+        A RegNetY-1.6GF backbone, fine-tuned on 12,259 photos of household waste.
+        It gets <b>97.4%</b> of a held-out test set right &mdash; a test set built so that
+        no image in it has a near-duplicate anywhere in training.
+      </p>
+      <p class="hero__privacy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l7 3.5v5c0 4.4-2.9 8.2-7 9.5-4.1-1.3-7-5.1-7-9.5v-5z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        The model runs on your device. Your photo is never uploaded.
+      </p>
+
+      <div class="classifier">
+        <!-- Input -->
+        <div class="panel">
+          <div class="panel__head">
+            <h2 class="panel__title">Your image</h2>
+            <span class="panel__meta">JPEG, PNG or WebP</span>
+          </div>
+          <div class="panel__body">
+            <div class="dropzone" id="dropzone" role="button" tabindex="0"
+                 aria-label="Choose an image to classify, or drop one here">
+              <div class="dropzone__prompt">
+                <svg class="dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/>
+                  <path d="M3.5 15v3.5a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V15"/>
+                </svg>
+                <span class="dropzone__title">Drop a photo here</span>
+                <p class="dropzone__hint">or click to choose a file</p>
+              </div>
+              <img class="dropzone__preview" id="preview" alt="">
+              <span class="dropzone__replace">Change image</span>
+            </div>
+            <input class="file-input" type="file" id="file-input" accept="image/*">
+
+            <div class="samples">
+              <p class="samples__label">
+                No photo handy? These ten come from the held-out test set &mdash; the model never saw them while training.
+              </p>
+              <div class="samples__grid" id="samples"></div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn--primary" type="button" id="classify" disabled>Classify image</button>
+              <button class="btn btn--ghost" type="button" id="reset" disabled>Clear</button>
+            </div>
+
+            <div class="model-status" id="model-status" data-state="idle">
+              <span class="model-status__dot"></span>
+              <span id="model-status-text">Preparing the model&hellip;</span>
+              <span class="progress" id="progress"><span class="progress__fill" id="progress-fill"></span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="panel">
+          <div class="panel__head">
+            <h2 class="panel__title">Prediction</h2>
+            <span class="panel__meta" id="timing"></span>
+          </div>
+          <div class="panel__body">
+            <div class="verdict is-empty" id="verdict">
+              <span class="verdict__label">Most likely stream</span>
+              <div class="verdict__row">
+                <span class="verdict__swatch" id="verdict-swatch" hidden></span>
+                <span class="verdict__class" id="verdict-class">Nothing classified yet</span>
+                <span class="verdict__confidence" id="verdict-confidence"></span>
+                <span class="badge badge--review" id="review-badge" hidden>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                       stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 8.5v5M12 17h.01"/>
+                    <circle cx="12" cy="12" r="9"/>
+                  </svg>
+                  Send to manual review
+                </span>
+              </div>
+            </div>
+
+            <div class="readout" id="readout" role="img"
+                 aria-label="Calibrated probability for each of the ten waste streams"></div>
+
+            <p class="readout__foot" id="readout-foot">
+              Probabilities are temperature-scaled, so they can be read as confidences rather than
+              just a ranking.
+            </p>
+
+            <div class="alert" id="alert" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                   aria-hidden="true">
+                <path d="M12 8.5v5M12 17h.01"/>
+                <circle cx="12" cy="12" r="9"/>
+              </svg>
+              <p id="alert-text"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Results ============================ -->
+  <section class="section" id="results">
+    <div class="shell">
+      <div class="section__head">
+        <h2 class="section__title">Results on the test set</h2>
+        <p class="section__lede">
+          1,751 images, scored once, after every decision had already been made on the validation split.
+          Ranges are 95% bootstrap confidence intervals; the comparison is against the frozen-backbone
+          linear probe that stage&nbsp;2 started from.
+        </p>
+      </div>
+
+      <div class="metrics" id="metrics"></div>
+
+      <div class="section__head" style="margin-top:52px">
+        <h3 class="section__title" style="font-size:var(--t-lg)">Per class</h3>
+        <p class="section__lede">
+          Sorted weakest first. <b>Missed</b> counts images of that class the model assigned elsewhere;
+          <b>false alarms</b> counts images of other classes it assigned to this one.
+        </p>
+      </div>
+      <div class="table-wrap">
+        <table id="per-class">
+          <caption class="visually-hidden">Per-class precision, recall and F1 on the test set</caption>
+          <thead>
+            <tr>
+              <th scope="col">Stream</th>
+              <th scope="col" class="num">Images</th>
+              <th scope="col">F1<span class="scale-caption">scale 0.85 &ndash; 1.00</span></th>
+              <th scope="col" class="num">Precision</th>
+              <th scope="col" class="num">Recall</th>
+              <th scope="col" class="num">Missed</th>
+              <th scope="col" class="num">False alarms</th>
+              <th scope="col" class="num">vs probe</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="section__head" style="margin-top:52px">
+        <h3 class="section__title" style="font-size:var(--t-lg)">What gets confused with what</h3>
+        <p class="section__lede">
+          Rows are the true stream, columns the prediction. The diagonal is outlined: those are the
+          1,705 correct calls out of 1,751.
+        </p>
+      </div>
+      <div class="matrix-layout">
+        <div>
+          <div class="matrix-scroll">
+            <table class="matrix" id="matrix">
+              <caption class="visually-hidden">
+                Confusion matrix: rows are the true waste stream, columns the predicted stream
+              </caption>
+            </table>
+          </div>
+          <div class="matrix-key">
+            <span>Images in cell</span>
+            <span class="matrix-key__ramp" aria-hidden="true">
+              <span class="matrix-key__step" style="background:var(--seq-0)"></span>
+              <span class="matrix-key__step" style="background:var(--seq-1)"></span>
+              <span class="matrix-key__step" style="background:var(--seq-2)"></span>
+              <span class="matrix-key__step" style="background:var(--seq-3)"></span>
+              <span class="matrix-key__step" style="background:var(--seq-4)"></span>
+              <span class="matrix-key__step" style="background:var(--seq-5)"></span>
+            </span>
+            <span id="matrix-key-max">none &rarr; most</span>
+          </div>
+        </div>
+        <div class="matrix-note" id="matrix-note"></div>
+      </div>
+
+      <div class="section__head" style="margin-top:52px">
+        <h3 class="section__title" style="font-size:var(--t-lg)">The five runs</h3>
+        <p class="section__lede">
+          Each run was trained once and its predictions cached, so the comparison below is computed from
+          stored logits rather than from a re-run. The winner was chosen on validation macro-F1 alone.
+        </p>
+      </div>
+      <div class="table-wrap">
+        <table class="runs" id="runs">
+          <caption class="visually-hidden">Comparison of the five training runs</caption>
+          <thead>
+            <tr>
+              <th scope="col">Run</th>
+              <th scope="col">What was trainable</th>
+              <th scope="col" class="num">Params</th>
+              <th scope="col" class="num">Epochs</th>
+              <th scope="col" class="num">Time</th>
+              <th scope="col" class="num">Val macro-F1</th>
+              <th scope="col" class="num">Test macro-F1</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= Method ============================= -->
+  <section class="section" id="method">
+    <div class="shell">
+      <div class="section__head">
+        <h2 class="section__title">How it was built</h2>
+        <p class="section__lede">
+          The ordering matters: each stage depends on the one before it, and the evaluation protocol was
+          fixed before any model was trained.
+        </p>
+      </div>
+
+      <div class="pipeline">
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Audit every file</h3>
+            <p class="stage__body">
+              All 12,259 images were opened and fully decoded, recording mode, real format, geometry, an
+              MD5 and a 64-bit perceptual hash. Nothing was corrupt; seven files had an extension that
+              lied about their real format, which is harmless because Pillow sniffs the actual one.
+            </p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Group the near-duplicates</h3>
+            <p class="stage__body">
+              Web-scraped datasets repeat the same photo. Images within a Hamming distance of 4 of each
+              other were linked and merged transitively into groups. Groups whose members carried
+              <strong>different</strong> labels are the same picture annotated twice inconsistently, so they
+              were dropped as label noise.
+            </p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Split so nothing leaks</h3>
+            <p class="stage__body">
+              A plain stratified random split leaves about 0.1% of validation and test images with a
+              near-duplicate in training &mdash; small, but it inflates the score. Using
+              <code>StratifiedGroupKFold</code> twice makes the 71&thinsp;/&thinsp;14.5&thinsp;/&thinsp;14.5
+              split stratified by class <strong>and</strong> disjoint at the group level, so the leakage is
+              exactly zero at no extra cost.
+            </p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Fit a linear probe first</h3>
+            <p class="stage__body">
+              The ImageNet backbone was frozen and only a new 10-class head trained &mdash; 8,890 parameters
+              out of 10.3M. It reaches 0.935 validation macro-F1, and train and validation curves stay
+              within ~1.5&nbsp;pp of each other: the frozen features are a capacity limit, not a variance
+              problem. That is the signal that fine-tuning is worth doing.
+            </p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Fine-tune four ways</h3>
+            <p class="stage__body">
+              Every run starts from that probe, so the head is already fitted when the first gradients
+              reach the backbone. Progressively more of the network was unfrozen with lower learning rates
+              for earlier stages, under one epoch of warm-up then cosine decay, label smoothing, and
+              stronger augmentation to match the extra capacity.
+            </p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Pick a winner without fooling yourself</h3>
+            <p class="stage__body">
+              Ranking on a point estimate picks winners by noise. Each run was compared to the leader with
+              a paired bootstrap; four of the five were statistically tied on validation macro-F1, and the
+              tie was broken by temperature-scaled validation NLL &mdash; a proper scoring rule, so it
+              rewards honest probabilities rather than a luckier argmax.
+            </p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage__ord" aria-hidden="true"></div>
+          <div>
+            <h3 class="stage__title">Calibrate, then export</h3>
+            <p class="stage__body">
+              Horizontal-flip test-time augmentation was measured and <strong>rejected</strong>: it doubles
+              inference cost for a change of &minus;0.13&nbsp;pp that the bootstrap cannot distinguish from
+              zero. Label smoothing had left the model under-confident, so a single temperature fitted on
+              validation pulled expected calibration error from 0.108 to 0.008 without changing a single
+              prediction. The result is one file holding weights, class order, preprocessing, temperature
+              and the review threshold &mdash; which is what this page downloads.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= Figures ============================= -->
+  <section class="section" id="figures">
+    <div class="shell">
+      <div class="section__head">
+        <h2 class="section__title">Figures from the notebook</h2>
+        <p class="section__lede">
+          Generated by the evaluation sections of
+          <a href="https://github.com/evez12/Garbage-Classifier/blob/main/notebooks/model_training_notebook.ipynb">the
+          notebook</a>, from the same stored logits as the tables above.
+        </p>
+      </div>
+
+      <div class="figures">
+        <figure>
+          <img src="figures/learning_curves.png" alt="Loss, accuracy and validation macro-F1 per epoch for all five runs." loading="lazy" decoding="async" width="1800" height="700">
+          <figcaption><b>Learning curves, all five runs</b>The baseline is offset so the fine-tuning runs start where it ended.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/per_class_metrics.png" alt="Per-class precision, recall and F1 with 95% bootstrap confidence intervals." loading="lazy" decoding="async" width="1800" height="700">
+          <figcaption><b>Per-class metrics with confidence intervals</b>The intervals on <i>trash</i> are wide because only 65 test images carry that label.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/calibration.png" alt="Reliability diagram and confidence histogram after temperature scaling." loading="lazy" decoding="async" width="1800" height="700">
+          <figcaption><b>Calibration after temperature scaling</b>Bars track the diagonal, so a stated 0.9 really does mean about 90% correct.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/risk_coverage.png" alt="Accuracy on automatically handled images against the share of images handled." loading="lazy" decoding="async" width="1800" height="900">
+          <figcaption><b>Risk against coverage</b>Routing the least-confident 6% of images to a human buys 99.2% accuracy on the rest.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/gradcam.jpg" alt="Grad-CAM heat maps over correctly classified test images." loading="lazy" decoding="async" width="1400" height="900">
+          <figcaption><b>Where the model looks</b>Grad-CAM on correct predictions: attention sits on the object, not the background.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/tsne_embeddings.png" alt="t-SNE projection of penultimate-layer features before and after fine-tuning." loading="lazy" decoding="async" width="1800" height="800">
+          <figcaption><b>Feature space, before and after</b>Fine-tuning tightens the clusters: cosine silhouette rises from 0.157 to 0.279.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/robustness.png" alt="Macro-F1 under blur, noise, low light, contrast, JPEG, low resolution and rotation." loading="lazy" decoding="async" width="1800" height="800">
+          <figcaption><b>Robustness to corruption</b>94% of clean macro-F1 is retained on average; low resolution hurts most.</figcaption>
+        </figure>
+        <figure>
+          <img src="figures/roc_curves.png" alt="Per-class receiver operating characteristic curves." loading="lazy" decoding="async" width="1800" height="800">
+          <figcaption><b>Per-class ROC</b>Macro one-vs-rest AUC is 0.9988, so the ranking is near-perfect even where argmax slips.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Reproduce ============================ -->
+  <section class="section" id="reproduce">
+    <div class="shell">
+      <div class="section__head">
+        <h2 class="section__title">Run it yourself</h2>
+        <p class="section__lede">
+          Everything on this page comes from one seeded run. The notebook and the scripts share the same
+          configuration file, so either path reproduces it.
+        </p>
+      </div>
+
+      <div class="repro">
+        <div>
+          <h3>Train</h3>
+          <p>
+            Download <a href="https://www.kaggle.com/datasets/sumn2u/garbage-classification-v2">Garbage
+            Classification v2</a> into <code>data/garbage/</code>, one folder per class, then:
+          </p>
+<pre><code>git clone https://github.com/evez12/Garbage-Classifier.git
+cd Garbage-Classifier
+pip install -r requirements.txt
+
+# all five runs, then selection and export
+python scripts/train.py --model all
+
+# or a single experiment
+python scripts/train.py --model ft_block34</code></pre>
+        </div>
+        <div>
+          <h3>Classify</h3>
+          <p>
+            The exported bundle is all inference needs &mdash; weights, class order, preprocessing,
+            temperature and the review threshold:
+          </p>
+<pre><code>python scripts/predict.py photo.jpg
+
+# rebuild the model this page runs
+pip install -r requirements-onnx.txt
+python scripts/export_onnx.py</code></pre>
+          <p>
+            Trained weights are attached to the
+            <a href="https://github.com/evez12/Garbage-Classifier/releases/latest">latest release</a>
+            if you would rather not retrain.
+          </p>
+        </div>
+      </div>
+
+      <div class="section__head" style="margin-top:46px">
+        <h3 class="section__title" style="font-size:var(--t-lg)">The run behind these numbers</h3>
+      </div>
+      <div class="repro">
+        <div class="spec" id="spec-left"></div>
+        <div class="spec" id="spec-right"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer__grid">
+    <div>
+      <p><b>Garbage Classifier</b> &mdash; built by Avaz Huseynov.</p>
+      <p>Code under the MIT licence. The dataset keeps its own terms.</p>
+    </div>
+    <ul>
+      <li><a href="https://github.com/evez12/Garbage-Classifier">Repository</a></li>
+      <li><a href="https://github.com/evez12/Garbage-Classifier/blob/main/notebooks/model_training_notebook.ipynb">Training notebook</a></li>
+      <li><a href="https://www.kaggle.com/datasets/sumn2u/garbage-classification-v2">Dataset on Kaggle</a></li>
+      <li><a href="https://arxiv.org/abs/2003.13678">RegNet paper</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>
