@@ -1,0 +1,33 @@
+# Runs the pipeline smoke test on every push and pull request.
+#
+# It uses a synthetic dataset and randomly initialised weights, so it needs
+# neither the Kaggle download nor the pretrained checkpoint.
+
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install numpy pandas scipy scikit-learn pillow ImageHash matplotlib \
+                      seaborn tensorboard tqdm PyYAML torchinfo pytest
+
+      - name: Run the smoke test
+        run: pytest tests/ -v
