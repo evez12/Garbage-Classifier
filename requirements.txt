@@ -1,0 +1,40 @@
+# Portable pinned environment for the Garbage Classifier.
+#
+# These are the exact versions the reported run was produced with, but with
+# the stock PyTorch wheels instead of the CUDA 13.0 ones, so this file
+# installs on CPU-only machines and on CUDA 12.x / 13.x alike:
+#
+#     pip install -r requirements.txt
+#
+# To reproduce the training environment bit-for-bit (Windows + RTX 50-series,
+# CUDA 13.0 wheels, bf16 autocast) use requirements-cu130.txt instead.
+
+# --- deep learning --------------------------------------------------------
+torch==2.14.0
+torchvision==0.29.0
+torchinfo==1.8.0
+
+# --- scientific stack -----------------------------------------------------
+numpy==2.5.4
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+
+# --- images ---------------------------------------------------------------
+pillow==12.3.0
+ImageHash==4.3.2
+
+# --- plotting -------------------------------------------------------------
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# --- logging / progress ---------------------------------------------------
+tensorboard==2.21.0
+tqdm==4.70.1
+
+# --- notebook widgets (tqdm.auto progress bars in Jupyter) ----------------
+ipywidgets==8.1.9
+
+# Running notebooks/model_training_notebook.ipynb additionally needs a
+# Jupyter front end:            pip install jupyterlab
+# Exporting the ONNX model needs: pip install -r requirements-onnx.txt

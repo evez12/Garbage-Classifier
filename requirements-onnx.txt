@@ -1,0 +1,7 @@
+# Only needed by scripts/export_onnx.py, which converts the trained bundle
+# into the ONNX model the GitHub Pages demo runs in the browser.
+#
+#     pip install -r requirements-onnx.txt
+
+onnx==1.23.2
+onnxruntime==1.29.0

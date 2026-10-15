@@ -1,0 +1,30 @@
+# Exact training environment of the reported run.
+#
+# Windows 11 + NVIDIA RTX 5070 Laptop GPU (compute capability 12.0),
+# CUDA 13.0 wheels, Python 3.12. bf16 autocast needs an Ampere-or-newer GPU.
+#
+#     pip install -r requirements-cu130.txt
+#
+# On a CPU-only machine, or on CUDA 12.x, use requirements.txt instead.
+
+--extra-index-url https://download.pytorch.org/whl/cu130
+
+torch==2.14.0+cu130
+torchvision==0.29.0+cu130
+torchinfo==1.8.0
+
+numpy==2.5.4
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+
+pillow==12.3.0
+ImageHash==4.3.2
+
+matplotlib==3.11.2
+seaborn==0.13.2
+
+tensorboard==2.21.0
+tqdm==4.70.1
+
+ipywidgets==8.1.9

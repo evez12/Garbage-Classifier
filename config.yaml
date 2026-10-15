@@ -1,0 +1,98 @@
+# Default configuration for the Garbage Classifier pipeline.
+#
+# Every value below mirrors the reported run in
+# notebooks/model_training_notebook.ipynb. Point `data.root` at your own copy
+# of the dataset and nothing else needs to change.
+#
+# Any field can be overridden on the command line without editing this file:
+#   python scripts/train.py --model ft_block34 --data-root /path/to/garbage
+#   python scripts/train.py --model all --batch-size 32 --num-workers 0
+
+seed: 11
+
+data:
+  # Directory holding one subdirectory per class (see README -> Dataset).
+  root: data/garbage
+  extensions: [".jpg", ".jpeg", ".png", ".bmp", ".webp"]
+  # Two images are treated as near-duplicates when the Hamming distance
+  # between their 64-bit perceptual hashes is at most this value. Groups are
+  # merged transitively and never span two splits.
+  phash_max_distance: 4
+  # Group-aware stratified hold-out: 1/7 of the data becomes test, then 1/6
+  # of the remainder becomes validation (~71 / 14.5 / 14.5).
+  test_n_splits: 7
+  val_n_splits: 6
+
+image:
+  width: 224
+  height: 224
+  channels: 3
+  # ImageNet channel statistics; a pretrained backbone must receive inputs
+  # normalised exactly as during pretraining.
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+loader:
+  batch_size: 64
+  num_workers: 4
+  pin_memory: true
+
+# Stage 1 - linear probing with a frozen backbone.
+linear_probe:
+  epochs: 15
+  learning_rate: 1.0e-3
+  weight_decay: 0.01
+  eta_min: 1.0e-5
+  patience: 5
+  use_class_weights: false
+  class_weight_alpha: 1.0
+
+# Stage 2 - fine-tuning. `learning_rates` maps a parameter-name prefix to its
+# learning rate: listed prefixes are trainable, everything else stays frozen.
+finetune:
+  shared:
+    epochs: 20
+    warmup_epochs: 1
+    weight_decay: 0.05
+    label_smoothing: 0.1
+    patience: 5
+  experiments:
+    ft_block4:
+      description: Unfreeze last stage
+      learning_rates:
+        fc: 5.0e-4
+        trunk_output.block4: 1.0e-4
+    ft_block34:
+      description: Unfreeze last two stages
+      learning_rates:
+        fc: 5.0e-4
+        trunk_output.block4: 1.0e-4
+        trunk_output.block3: 5.0e-5
+    ft_full_llrd:
+      description: Full fine-tuning, layer-wise LR decay
+      learning_rates:
+        fc: 5.0e-4
+        trunk_output.block4: 1.0e-4
+        trunk_output.block3: 5.0e-5
+        trunk_output.block2: 2.5e-5
+        trunk_output.block1: 1.25e-5
+        stem: 1.0e-5
+    ft_block34_cw:
+      description: block3+4 + sqrt class weights
+      class_weight_alpha: 0.5
+      learning_rates:
+        fc: 5.0e-4
+        trunk_output.block4: 1.0e-4
+        trunk_output.block3: 5.0e-5
+
+# Post-training selection and the deployable recipe.
+selection:
+  # Horizontal-flip TTA is adopted only when its validation macro-F1 gain is
+  # statistically supported at this level (paired bootstrap, P(delta <= 0)).
+  tta_significance: 0.05
+  bootstrap_resamples: 2000
+  calibration_bins: 15
+  # Confidence thresholds are chosen on validation for these target
+  # accuracies; the 99% one is stored in the bundle as `review_threshold`.
+  selective_targets: [0.97, 0.98, 0.99, 0.995]
+  review_target: 0.99
