@@ -495,10 +495,20 @@ function setImageSource(src, revokeAfterLoad) {
 async function acceptImage(src, { revoke = false, label = "" } = {}) {
   if (busy) return; // a classification is running against the current image
   hideAlert();
+
+  // Hold Classify closed until the new image has actually decoded. Leaving it
+  // enabled from the previous pick let a quick press run against an image that
+  // was still loading.
+  hasImage = false;
+  $("classify").disabled = true;
+  $("timing").textContent = "";
+
   try {
     await setImageSource(src, revoke);
   } catch {
     showAlert("That file could not be read as an image. Try a JPEG, PNG or WebP.");
+    $("dropzone").classList.remove("has-image");
+    $("reset").disabled = false;
     return;
   }
   $("preview").src = imageEl.src;
@@ -509,7 +519,6 @@ async function acceptImage(src, { revoke = false, label = "" } = {}) {
   hasImage = true;
   clearReadout(modelMeta?.classes ?? CLASSES_FALLBACK);
   resetVerdict();
-  $("timing").textContent = "";
   loadModel().catch(() => {});
 }
 
